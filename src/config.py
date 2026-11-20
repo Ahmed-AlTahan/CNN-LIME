@@ -61,4 +61,7 @@ RECIPES = {
     "resnet18": Recipe("resnet18", epochs=100, lr=1e-4, optimizer="adam", patience=10, batch_size=32),
     # Same recipe as ResNet18, so only the depth of the network differs.
     "resnet50": Recipe("resnet50", epochs=100, lr=1e-4, optimizer="adam", patience=10, batch_size=32),
+    # ConvNeXt is normally fine-tuned with AdamW, weight decay, warm-up and cosine decay (Liu et al., 2022).
+    "convnext_tiny": Recipe("convnext_tiny", epochs=50, lr=1e-4, optimizer="adamw", weight_decay=0.05,
+                            warmup_epochs=3, cosine=True, label_smoothing=0.1, patience=10, batch_size=32),
 }

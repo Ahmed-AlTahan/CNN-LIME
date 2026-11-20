@@ -1,7 +1,7 @@
 # Fischertechnik workpiece material classification
 
 Classifies the material of the workpiece (15 classes) in photos of the Fischertechnik factory model.
-Four CNNs are compared on the same data and the same scene-wise split.
+Five CNNs are compared on the same data and the same scene-wise split.
 
 | # | Model | Notebook |
 |---|---|---|
@@ -9,6 +9,7 @@ Four CNNs are compared on the same data and the same scene-wise split.
 | 2 | Attention CNN, trained from scratch | [notebooks/02_attention_cnn.ipynb](notebooks/02_attention_cnn.ipynb) |
 | 3 | ResNet18, pretrained on ImageNet | [notebooks/03_resnet18.ipynb](notebooks/03_resnet18.ipynb) |
 | 4 | ResNet50, pretrained on ImageNet | [notebooks/04_resnet50.ipynb](notebooks/04_resnet50.ipynb) |
+| 5 | ConvNeXt-Tiny, pretrained on ImageNet | [notebooks/05_convnext_tiny.ipynb](notebooks/05_convnext_tiny.ipynb) |
 
 ## Repository layout
 
@@ -16,7 +17,7 @@ Four CNNs are compared on the same data and the same scene-wise split.
 src/
   config.py     data location, split, class names, training recipe of each model
   data.py       labels, scene-wise split, image cache, scene-grouped batches, GPU augmentation
-  models.py     SimpleCNN, AttentionCNN, PretrainedResNet (ResNet18 / ResNet50)
+  models.py     SimpleCNN, AttentionCNN, Pretrained (ResNet18 / ResNet50 / ConvNeXt-Tiny)
   engine.py     training (reproducible, one run per seed), evaluation, loading saved weights
   report.py     test summary over seeds, per-class / per-scene analysis, all figures
 notebooks/      one Colab notebook per model; they only call the code in src/
@@ -55,7 +56,7 @@ Each model writes to its own folder, `outputs/<model>/` in Colab, copied to
              per_scene_accuracy.csv, predictions_test.csv
 ```
 
-`<model>` is `simple_cnn`, `attention_cnn`, `resnet18` or `resnet50`. Outputs are not stored in git.
+`<model>` is `simple_cnn`, `attention_cnn`, `resnet18`, `resnet50` or `convnext_tiny`. Outputs are not stored in git.
 
 ## Loading a trained model (e.g. for LIME)
 

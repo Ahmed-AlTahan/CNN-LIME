@@ -2,7 +2,8 @@
 so weights saved by the earlier runs still load."""
 
 import torch.nn as nn
-from torchvision.models import ResNet18_Weights, ResNet50_Weights, resnet18, resnet50
+from torchvision.models import (ConvNeXt_Tiny_Weights, ResNet18_Weights, ResNet50_Weights, convnext_tiny,
+                                resnet18, resnet50)
 
 
 class SimpleCNN(nn.Module):
@@ -67,31 +68,39 @@ class AttentionCNN(nn.Module):
         return (logits, scores) if return_attention else logits
 
 
-class PretrainedResNet(nn.Module):
-    """Models 3 and 4: a ResNet pretrained on ImageNet, last layer replaced by Dropout(0.5) -> Linear(-, 15);
-    all layers are fine-tuned. pretrained=True for training; pretrained=False when loading saved weights."""
+class Pretrained(nn.Module):
+    """Models 3-5: a network pretrained on ImageNet whose last layer is replaced by
+    Dropout(0.5) -> Linear(features, 15); all layers are fine-tuned.
+    pretrained=True for training; pretrained=False when loading saved weights."""
 
-    ARCHS = {"resnet18": (resnet18, ResNet18_Weights.DEFAULT),     # 512 features, 11.2 M parameters
-             "resnet50": (resnet50, ResNet50_Weights.DEFAULT)}     # 2048 features, 23.5 M parameters
+    ARCHS = {"resnet18": (resnet18, ResNet18_Weights.DEFAULT),              # 512 features, 11.2 M parameters
+             "resnet50": (resnet50, ResNet50_Weights.DEFAULT),              # 2048 features, 23.5 M parameters
+             "convnext_tiny": (convnext_tiny, ConvNeXt_Tiny_Weights.DEFAULT)}  # 768 features, 27.8 M parameters
 
     def __init__(self, arch, num_classes=15, pretrained=True):
         super().__init__()
         build, weights = self.ARCHS[arch]
         self.base_model = build(weights=weights if pretrained else None)
-        self.base_model.fc = nn.Sequential(nn.Dropout(0.5),
-                                           nn.Linear(self.base_model.fc.in_features, num_classes))
+        if arch.startswith("resnet"):            # ResNet: avgpool -> fc
+            self.base_model.fc = self._head(self.base_model.fc.in_features, num_classes)
+        else:                                    # ConvNeXt: avgpool -> classifier = [LayerNorm, Flatten, Linear]
+            self.base_model.classifier[2] = self._head(self.base_model.classifier[2].in_features, num_classes)
+
+    @staticmethod
+    def _head(in_features, num_classes):
+        return nn.Sequential(nn.Dropout(0.5), nn.Linear(in_features, num_classes))
 
     def forward(self, x):
         return self.base_model(x)
 
 
 MODELS = {"simple_cnn": SimpleCNN, "attention_cnn": AttentionCNN,
-          "resnet18": PretrainedResNet, "resnet50": PretrainedResNet}
+          **{name: Pretrained for name in Pretrained.ARCHS}}
 
 
 def build_model(name, num_classes=15, pretrained=True):
-    if MODELS[name] is PretrainedResNet:
-        return PretrainedResNet(name, num_classes, pretrained=pretrained)
+    if MODELS[name] is Pretrained:
+        return Pretrained(name, num_classes, pretrained=pretrained)
     return MODELS[name](num_classes)
 
 
