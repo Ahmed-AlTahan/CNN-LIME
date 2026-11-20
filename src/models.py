@@ -1,8 +1,8 @@
-"""The three networks. Layer names are unchanged from the original code,
+"""The networks. Layer names are unchanged from the original code,
 so weights saved by the earlier runs still load."""
 
 import torch.nn as nn
-from torchvision.models import ResNet18_Weights, resnet18
+from torchvision.models import ResNet18_Weights, ResNet50_Weights, resnet18, resnet50
 
 
 class SimpleCNN(nn.Module):
@@ -67,13 +67,17 @@ class AttentionCNN(nn.Module):
         return (logits, scores) if return_attention else logits
 
 
-class ResNet18(nn.Module):
-    """Model 3: ResNet18 pretrained on ImageNet, last layer replaced by Dropout(0.5) -> Linear(512,15).
-    pretrained=True for training; pretrained=False when loading saved weights."""
+class PretrainedResNet(nn.Module):
+    """Models 3 and 4: a ResNet pretrained on ImageNet, last layer replaced by Dropout(0.5) -> Linear(-, 15);
+    all layers are fine-tuned. pretrained=True for training; pretrained=False when loading saved weights."""
 
-    def __init__(self, num_classes=15, pretrained=True):
+    ARCHS = {"resnet18": (resnet18, ResNet18_Weights.DEFAULT),     # 512 features, 11.2 M parameters
+             "resnet50": (resnet50, ResNet50_Weights.DEFAULT)}     # 2048 features, 23.5 M parameters
+
+    def __init__(self, arch, num_classes=15, pretrained=True):
         super().__init__()
-        self.base_model = resnet18(weights=ResNet18_Weights.DEFAULT if pretrained else None)
+        build, weights = self.ARCHS[arch]
+        self.base_model = build(weights=weights if pretrained else None)
         self.base_model.fc = nn.Sequential(nn.Dropout(0.5),
                                            nn.Linear(self.base_model.fc.in_features, num_classes))
 
@@ -81,12 +85,13 @@ class ResNet18(nn.Module):
         return self.base_model(x)
 
 
-MODELS = {"simple_cnn": SimpleCNN, "attention_cnn": AttentionCNN, "resnet18": ResNet18}
+MODELS = {"simple_cnn": SimpleCNN, "attention_cnn": AttentionCNN,
+          "resnet18": PretrainedResNet, "resnet50": PretrainedResNet}
 
 
 def build_model(name, num_classes=15, pretrained=True):
-    if name == "resnet18":
-        return ResNet18(num_classes, pretrained=pretrained)
+    if MODELS[name] is PretrainedResNet:
+        return PretrainedResNet(name, num_classes, pretrained=pretrained)
     return MODELS[name](num_classes)
 
 

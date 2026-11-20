@@ -59,4 +59,6 @@ RECIPES = {
     "attention_cnn": Recipe("attention_cnn", **_FROM_SCRATCH),
     # Same settings as the original ResNet18 training (train.py): Adam 1e-4, constant lr, patience 10.
     "resnet18": Recipe("resnet18", epochs=100, lr=1e-4, optimizer="adam", patience=10, batch_size=32),
+    # Same recipe as ResNet18, so only the depth of the network differs.
+    "resnet50": Recipe("resnet50", epochs=100, lr=1e-4, optimizer="adam", patience=10, batch_size=32),
 }
