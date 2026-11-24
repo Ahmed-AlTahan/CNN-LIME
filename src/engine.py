@@ -9,6 +9,7 @@ import copy
 import csv
 import math
 import random
+import shutil
 import time
 
 import numpy as np
@@ -26,10 +27,25 @@ torch.use_deterministic_algorithms(True, warn_only=True)    # warn instead of fa
 
 
 def out_path(out_dir, sub, name):
-    """Path of an output file: <out_dir>/<sub>/<name>, sub = 'weights', 'figures' or 'results'."""
-    folder = os.path.join(out_dir, sub)
+    """Path of an output file: <out_dir>/<sub>/<model>_<name>, sub = 'weights', 'figures' or 'results'.
+    Every file name starts with the model name, so a file is identifiable even outside its folder."""
+    model = os.path.basename(os.path.normpath(out_dir))
+    folder, base = os.path.split(os.path.join(out_dir, sub, name))
     os.makedirs(folder, exist_ok=True)
-    return os.path.join(folder, name)
+    return os.path.join(folder, f"{model}_{base}")
+
+
+def rel(path):
+    """A path relative to the repository folder, for short printouts."""
+    return os.path.relpath(path, config.ROOT)
+
+
+def log(out_dir, text=""):
+    """Prints a line and appends it to results/<model>_train_log.txt, so the training log
+    survives even if the notebook output is lost."""
+    print(text)
+    with open(out_path(out_dir, "results", "train_log.txt"), "a", encoding="utf-8") as f:
+        f.write(text + "\n")
 
 
 def set_seed(seed):
@@ -64,15 +80,18 @@ def sanity_check(recipe, train_ds, steps=150):
     set_seed(0)
     model = models.build_model(recipe.model, config.NUM_CLASSES).to(device)
     images, labels = next(iter(data.make_train_loader(train_ds, recipe, 0)))
-    n = config.SCENE_SIZE                       # a full batch needs too much memory without AMP
+    n = config.SCENE_SIZE
     images, labels = data.normalize(images[:n].to(device)), labels[:n].to(device)
     opt = torch.optim.Adam(model.parameters(), lr=1e-3)
+    use_amp = device.type == "cuda"            # mixed precision, as in training: about half the GPU memory
+    scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
     model.train()
     for step in range(1, steps + 1):
         opt.zero_grad()
-        out = model(images)
-        loss = F.cross_entropy(out, labels)
-        loss.backward(); opt.step()
+        with torch.autocast(device_type=device.type, enabled=use_amp):
+            out = model(images)
+            loss = F.cross_entropy(out.float(), labels)
+        scaler.scale(loss).backward(); scaler.step(opt); scaler.update()
         if step == 1 or step % 25 == 0:
             acc = 100.0 * (out.argmax(1) == labels).float().mean().item()
             print(f"step {step:4d} | loss {loss.item():.4f} | batch acc {acc:.1f}%")
@@ -107,7 +126,7 @@ def train_one_run(recipe, seed, train_ds, val_loader, out_dir):
     scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
 
     init_loss, init_acc, _, _ = evaluate(model, val_loader)
-    print(f"Before training: val loss {init_loss:.3f} (chance ~{math.log(config.NUM_CLASSES):.3f}) "
+    log(out_dir, f"Before training: val loss {init_loss:.3f} (chance ~{math.log(config.NUM_CLASSES):.3f}) "
           f"| val acc {init_acc:.1f}%")
 
     history = []
@@ -131,18 +150,18 @@ def train_one_run(recipe, seed, train_ds, val_loader, out_dir):
         val_loss, val_acc, _, _ = evaluate(model, val_loader)
         tr_loss, tr_acc = loss_sum / total, 100.0 * correct / total
         history.append((epoch, tr_loss, tr_acc, val_loss, val_acc))
-        print(f"[seed {seed}] Epoch [{epoch:3d}/{recipe.epochs}] | Train Loss {tr_loss:.4f} "
+        log(out_dir, f"[seed {seed}] Epoch [{epoch:3d}/{recipe.epochs}] | Train Loss {tr_loss:.4f} "
               f"| Train Acc {tr_acc:6.2f}% | Val Loss {val_loss:.4f} | Val Acc {val_acc:6.2f}% "
               f"| lr {scheduler.get_last_lr()[0]:.2e} | {time.time() - t0:.0f}s")
 
         if val_acc > best_val_acc or (val_acc == best_val_acc and val_loss < best_val_loss):
             best_val_acc, best_val_loss, best_epoch, bad_epochs = val_acc, val_loss, epoch, 0
             best_weights = copy.deepcopy(model.state_dict())
-            print("   ---> New best validation accuracy, weights kept.")
+            log(out_dir, "   ---> New best validation accuracy, weights kept.")
         else:
             bad_epochs += 1
             if bad_epochs >= recipe.patience:
-                print(f"\nEarly stopping: no validation improvement for {recipe.patience} epochs.")
+                log(out_dir, f"Early stopping: no validation improvement for {recipe.patience} epochs.")
                 break
 
     model.load_state_dict(best_weights)
@@ -152,17 +171,21 @@ def train_one_run(recipe, seed, train_ds, val_loader, out_dir):
         w = csv.writer(f)
         w.writerow(["epoch", "train_loss", "train_acc", "val_loss", "val_acc"])
         w.writerows(history)
-    print(f"[seed {seed}] Best validation accuracy: {best_val_acc:.2f}% (epoch {best_epoch}) -> saved {path}")
+    log(out_dir, f"[seed {seed}] Best validation accuracy: {best_val_acc:.2f}% (epoch {best_epoch}) -> saved {rel(path)}")
     return dict(seed=seed, model=model, history=history, best_val_acc=best_val_acc,
                 best_epoch=best_epoch, path=path)
 
 
 def train_all(recipe, train_ds, val_loader, out_dir):
-    """One run per seed in recipe.seeds."""
+    """One run per seed in recipe.seeds. Old weights and results of this model are removed
+    first, so the output folder only ever holds the files of one complete training."""
+    for sub in ("weights", "results", os.path.join("figures", "scenes")):
+        shutil.rmtree(os.path.join(out_dir, sub), ignore_errors=True)
     n = models.count_parameters(models.build_model(recipe.model, config.NUM_CLASSES, pretrained=False))
-    print(f"{recipe.model}: {n / 1e6:.2f} M parameters | device: {device}")
+    log(out_dir, f"{recipe.model}: {n / 1e6:.2f} M parameters | device: {device}")
+    log(out_dir, str(recipe))
     runs = []
     for seed in recipe.seeds:
-        print(f"\n==================== Training run with seed {seed} ====================")
+        log(out_dir, f"\n==================== Training run with seed {seed} ====================")
         runs.append(train_one_run(recipe, seed, train_ds, val_loader, out_dir))
     return runs

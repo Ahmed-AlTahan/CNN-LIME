@@ -1,12 +1,18 @@
 """Settings shared by all notebooks: data location, scene-wise split, classes,
 and the training recipe of every model."""
 
+import os
 from dataclasses import dataclass, field, replace  # noqa: F401  (replace: change a recipe in a notebook)
 
+# ---- Locations (all relative to the repository folder, so the code runs from anywhere) ----
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_URL = "https://drive.google.com/file/d/1OfQmMsNR5DDLbZUmLL2DGuHPIGFxnqy6/view?usp=drive_link"
+IMAGE_DIR = os.path.join(ROOT, "data", "15workpieces_same_position", "all_images")
+OUTPUT_DIR = os.path.join(ROOT, "outputs")    # outputs/<model>/{weights, figures, results}/  (not in git)
+RESULTS_DIR = os.path.join(ROOT, "results")   # results/<model>/{figures, results}/  (in git, without weights)
+DRIVE_DIR = "/content/drive/MyDrive/thesis_results"   # Colab only: full copy as <DRIVE_DIR>/<model>/
+
 # ---- Data ----
-IMAGE_DIR = "data/15workpieces_same_position/all_images"
-OUTPUT_DIR = "outputs"            # outputs/<model>/{weights, figures, results}/
-DRIVE_DIR = "/content/drive/MyDrive/thesis_results"   # same structure on Google Drive: <DRIVE_DIR>/<model>/
 IMG_SIZE = 512                    # whole image, only resized (no cropping)
 SCENE_SIZE = 15                   # 15 consecutive sorted images = 1 scene (one per material)
 

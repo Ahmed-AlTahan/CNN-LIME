@@ -1,10 +1,11 @@
 """Results and figures, the same for every model.
 
-Everything goes to outputs/<model>/:
-    weights/   seed<N>.pth                      best-on-validation weights of each run (saved by engine.py)
-    figures/   inputs, curves, confusion_test, samples_test, attention_test, scenes/scene_<id>.png
-    results/   summary.json, history_seed<N>.csv, classification_report.txt,
-               per_scene_accuracy.csv, predictions_test.csv"""
+Everything goes to outputs/<model>/, and every file name starts with the model name:
+    weights/   <model>_seed<N>.pth              best-on-validation weights of each run (saved by engine.py)
+    figures/   <model>_inputs, _curves, _confusion_test, _samples_test, _attention_test .png,
+               scenes/<model>_scene_<id>.png
+    results/   <model>_summary.json, _train_log.txt, _history_seed<N>.csv, _classification_report.txt,
+               _per_scene_accuracy.csv, _predictions_test.csv"""
 
 import csv
 import dataclasses
@@ -21,7 +22,8 @@ from sklearn.metrics import classification_report, confusion_matrix
 
 import config
 import data
-from engine import device, evaluate, out_path, set_seed
+import env
+from engine import device, evaluate, out_path, rel, set_seed
 
 
 def output_dir(model_name):
@@ -36,7 +38,7 @@ def _save_figure(fig, out_dir, name, dpi=150):
     fig.tight_layout()
     fig.savefig(path, dpi=dpi)
     plt.show()
-    print(f"Saved {path}")
+    print(f"Saved {rel(path)}")
 
 
 def _thumbnail(path, size=800):
@@ -99,11 +101,12 @@ def test_summary(runs, test_loader, recipe, out_dir):
         "runs": [{"seed": r["seed"], "best_epoch": r["best_epoch"], "best_val_acc": round(float(r["best_val_acc"]), 2),
                   "test_acc": round(float(r["test_acc"]), 2)} for r in runs],
         "recipe": dataclasses.asdict(recipe),
+        "environment": env.info(),
     }
     path = out_path(out_dir, "results", "summary.json")
     with open(path, "w") as f:
         json.dump(summary, f, indent=2)
-    print(f"Saved {path}")
+    print(f"Saved {rel(path)}")
     return best
 
 
@@ -140,8 +143,8 @@ def analyse(run, test_ds, out_dir, title):
         w = csv.writer(f)
         w.writerow(["img_path", "scene", "true", "pred"])
         for smp, p in zip(test_ds.samples, preds):
-            w.writerow([smp["img_path"], smp["scene"], smp["label"], int(p)])
-    print(f"Saved results to {os.path.join(out_dir, 'results')}")
+            w.writerow([os.path.relpath(smp["img_path"], config.ROOT), smp["scene"], smp["label"], int(p)])
+    print(f"Saved results to {rel(os.path.join(out_dir, 'results'))}")
 
     plot_confusion(preds, labels, f"{title} - test set, seed {run['seed']}, acc {run['test_acc']:.1f}%", out_dir)
     plot_samples(test_ds, preds, out_dir)

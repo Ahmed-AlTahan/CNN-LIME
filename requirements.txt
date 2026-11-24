@@ -1,0 +1,9 @@
+# Install PyTorch with GPU support first, using the command for your CUDA version from
+# https://pytorch.org/get-started/locally/  (Colab already has everything installed).
+torch
+torchvision
+numpy
+matplotlib
+scikit-learn
+pillow
+gdown
