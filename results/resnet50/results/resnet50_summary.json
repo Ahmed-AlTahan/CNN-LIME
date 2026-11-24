@@ -1,0 +1,55 @@
+{
+  "model": "resnet50",
+  "test_acc_mean": 89.16,
+  "test_acc_std": 1.26,
+  "analysed_seed": 1,
+  "runs": [
+    {
+      "seed": 1,
+      "best_epoch": 16,
+      "best_val_acc": 93.07,
+      "test_acc": 88.27
+    },
+    {
+      "seed": 2,
+      "best_epoch": 51,
+      "best_val_acc": 92.53,
+      "test_acc": 90.93
+    },
+    {
+      "seed": 3,
+      "best_epoch": 12,
+      "best_val_acc": 90.93,
+      "test_acc": 88.27
+    }
+  ],
+  "recipe": {
+    "model": "resnet50",
+    "epochs": 100,
+    "lr": 0.0001,
+    "optimizer": "adam",
+    "weight_decay": 0.0,
+    "warmup_epochs": 0,
+    "cosine": false,
+    "label_smoothing": 0.0,
+    "patience": 10,
+    "batch_size": 32,
+    "scenes_per_batch": 0,
+    "rotation": 10.0,
+    "shift": 0.0,
+    "zoom": 0.0,
+    "brightness": 0.2,
+    "contrast": 0.2,
+    "seeds": [
+      1,
+      2,
+      3
+    ]
+  },
+  "environment": {
+    "machine": "local",
+    "gpu": "NVIDIA RTX A6000",
+    "code_commit": "26e2582",
+    "date": "2026-11-24 16:14"
+  }
+}

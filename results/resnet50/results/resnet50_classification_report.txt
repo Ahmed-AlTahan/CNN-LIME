@@ -1,0 +1,40 @@
+ResNet50, pretrained on ImageNet - test set, seed 1, accuracy 88.27%
+
+                precision    recall  f1-score   support
+
+ white plastic     1.0000    0.9600    0.9796        25
+     aluminium     0.7097    0.8800    0.7857        25
+         brass     1.0000    0.8400    0.9130        25
+         steel     0.8571    0.4800    0.6154        25
+  orange acryl     0.8621    1.0000    0.9259        25
+  yellow acryl     1.0000    0.8400    0.9130        25
+    blue acryl     0.9583    0.9200    0.9388        25
+     red acryl     0.9615    1.0000    0.9804        25
+   red plastic     0.8800    0.8800    0.8800        25
+  blue plastic     1.0000    0.9200    0.9583        25
+yellow plastic     1.0000    1.0000    1.0000        25
+  gray plastic     1.0000    0.8800    0.9362        25
+ black plastic     0.5641    0.8800    0.6875        25
+    light wood     0.9167    0.8800    0.8980        25
+     dark wood     0.8148    0.8800    0.8462        25
+
+      accuracy                         0.8827       375
+     macro avg     0.9016    0.8827    0.8839       375
+  weighted avg     0.9016    0.8827    0.8839       375
+
+         class | true | predicted
+ white plastic |   25 |        24
+     aluminium |   25 |        31
+         brass |   25 |        21
+         steel |   25 |        14
+  orange acryl |   25 |        29
+  yellow acryl |   25 |        21
+    blue acryl |   25 |        24
+     red acryl |   25 |        26
+   red plastic |   25 |        25
+  blue plastic |   25 |        23
+yellow plastic |   25 |        25
+  gray plastic |   25 |        22
+ black plastic |   25 |        39  <-- over-predicted
+    light wood |   25 |        24
+     dark wood |   25 |        27
