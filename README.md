@@ -82,7 +82,7 @@ The last notebook cell keeps them permanently:
 | Where | What | When |
 |---|---|---|
 | GitHub, `results/<model>/` | figures + results (no weights) | always (Colab: needs the `GITHUB_TOKEN` secret, see below) |
-| Google Drive, `MyDrive/thesis_results/<model>/` | everything, including the weights | Colab only |
+| Google Drive, `MyDrive/thesis_results/<model>/` | everything, including the weights | Colab; own computer once rclone is set up (below) |
 | `outputs/<model>/` on the computer | everything, including the weights | own computer |
 
 A re-run of a model replaces that model's files only.
@@ -91,6 +91,18 @@ A re-run of a model replaces that model's files only.
 Fine-grained tokens, repository `CNN-LIME`, permission *Contents: read and write*). In Colab, open the key icon
 (Secrets) in the left sidebar, add `GITHUB_TOKEN` with the token as value and enable notebook access.
 On an own computer the normal git login is used.
+
+**Google Drive on an own computer (once):** install [rclone](https://rclone.org) (no admin rights needed) and
+connect it to Google Drive as a remote named `gdrive`; a browser window opens to sign in:
+```
+mkdir -p ~/.local/bin && cd /tmp && curl -LO https://downloads.rclone.org/rclone-current-linux-amd64.zip \
+  && unzip -o rclone-current-linux-amd64.zip && cp rclone-*-linux-amd64/rclone ~/.local/bin/
+~/.local/bin/rclone config create gdrive drive scope=drive
+~/.local/bin/rclone lsd gdrive:          # check: lists the folders in your Drive
+```
+The last notebook cell then uploads `outputs/<model>/` (with weights) to `MyDrive/thesis_results/<model>/`.
+If the upload fails, retry it in the notebook with `env.save_to_drive_rclone(out_dir)`.
+On a shared computer, remove the Drive login when you are done: `~/.local/bin/rclone config delete gdrive`.
 
 ## Loading a trained model (e.g. for LIME)
 

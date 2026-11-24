@@ -11,6 +11,7 @@ IMAGE_DIR = os.path.join(ROOT, "data", "15workpieces_same_position", "all_images
 OUTPUT_DIR = os.path.join(ROOT, "outputs")    # outputs/<model>/{weights, figures, results}/  (not in git)
 RESULTS_DIR = os.path.join(ROOT, "results")   # results/<model>/{figures, results}/  (in git, without weights)
 DRIVE_DIR = "/content/drive/MyDrive/thesis_results"   # Colab only: full copy as <DRIVE_DIR>/<model>/
+RCLONE_REMOTE = "gdrive"          # own computer: rclone remote of Google Drive -> gdrive:thesis_results/<model>/
 
 # ---- Data ----
 IMG_SIZE = 512                    # whole image, only resized (no cropping)

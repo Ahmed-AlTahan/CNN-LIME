@@ -5,8 +5,9 @@ Every training run writes everything to outputs/<model>/ (weights, figures, resu
 `save_results` then keeps them permanently:
   * GitHub: figures and result files (no weights) -> results/<model>/ in this repository,
     committed and pushed. Works from Colab (with a GITHUB_TOKEN secret) and from an own computer.
-  * Google Drive (Colab only): a full copy including the weights -> MyDrive/thesis_results/<model>/.
-On an own computer the weights stay in outputs/<model>/weights/."""
+  * Google Drive: a full copy including the weights -> MyDrive/thesis_results/<model>/.
+    Colab: through the mounted Drive. Own computer: through rclone (one-time setup in the README:
+    a remote named config.RCLONE_REMOTE). Without rclone the weights stay in outputs/<model>/weights/."""
 
 import datetime
 import os
@@ -67,7 +68,8 @@ def ensure_dataset():
     os.makedirs(data_dir, exist_ok=True)
     zip_path = os.path.join(data_dir, "data.zip")
     print("Downloading the dataset (1.3 GB) ...")
-    gdown.download(config.DATA_URL, zip_path, quiet=True, fuzzy=True)
+    file_id = config.DATA_URL.split("/d/")[1].split("/")[0]     # id= works in old and new gdown versions
+    gdown.download(id=file_id, output=zip_path, quiet=True)
     with zipfile.ZipFile(zip_path) as z:
         z.extractall(data_dir)
     os.remove(zip_path)
@@ -83,7 +85,7 @@ def save_results(out_dir, push=True):
     if IN_COLAB:
         _save_to_drive(out_dir, model)
     else:
-        print(f"Weights and all outputs stay on this computer: outputs/{model}/")
+        save_to_drive_rclone(out_dir)
     _copy_to_repo(out_dir, model)
     if push:
         _push_to_github(model)
@@ -97,6 +99,38 @@ def _save_to_drive(out_dir, model):
     shutil.copytree(out_dir, drive_dir)
     drive.flush_and_unmount()
     print(f"Google Drive: full copy (with weights) in MyDrive/thesis_results/{model}/")
+
+
+def _rclone():
+    """Path of the rclone program, or None (also finds it in ~/.local/bin, which is often not on PATH)."""
+    local = os.path.expanduser("~/.local/bin/rclone")
+    return shutil.which("rclone") or (local if os.access(local, os.X_OK) else None)
+
+
+def save_to_drive_rclone(out_dir):
+    """Own computer: copies outputs/<model>/ (with weights) to MyDrive/thesis_results/<model>/ via rclone.
+    A re-run replaces this model's files only. Can be called on its own to retry the upload."""
+    model = os.path.basename(os.path.normpath(out_dir))
+    remote = config.RCLONE_REMOTE
+    setup = (f"  One-time setup: see the README, section 'Google Drive on an own computer'.\n"
+             f"  Until then all outputs (with weights) are only on this computer: outputs/{model}/")
+    exe = _rclone()
+    if not exe:
+        print(f"Google Drive: NOT saved - rclone is not installed.\n{setup}")
+        return False
+    remotes = subprocess.run([exe, "listremotes"], capture_output=True, text=True).stdout.split()
+    if f"{remote}:" not in remotes:
+        print(f"Google Drive: NOT saved - no rclone remote named '{remote}'.\n{setup}")
+        return False
+    dst = f"{remote}:thesis_results/{model}"
+    print(f"Google Drive: uploading outputs/{model}/ ...")
+    r = subprocess.run([exe, "sync", out_dir, dst], capture_output=True, text=True)
+    if r.returncode:
+        print(f"Google Drive: upload FAILED:\n{(r.stdout + r.stderr).strip()}\n"
+              f"  Retry later in the notebook with:  env.save_to_drive_rclone(out_dir)")
+        return False
+    print(f"Google Drive: full copy (with weights) in MyDrive/thesis_results/{model}/")
+    return True
 
 
 def _copy_to_repo(out_dir, model):
