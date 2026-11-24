@@ -1,0 +1,55 @@
+{
+  "model": "convnext_tiny",
+  "test_acc_mean": 94.67,
+  "test_acc_std": 1.52,
+  "analysed_seed": 1,
+  "runs": [
+    {
+      "seed": 1,
+      "best_epoch": 28,
+      "best_val_acc": 96.53,
+      "test_acc": 96.8
+    },
+    {
+      "seed": 2,
+      "best_epoch": 37,
+      "best_val_acc": 96.0,
+      "test_acc": 93.87
+    },
+    {
+      "seed": 3,
+      "best_epoch": 21,
+      "best_val_acc": 94.67,
+      "test_acc": 93.33
+    }
+  ],
+  "recipe": {
+    "model": "convnext_tiny",
+    "epochs": 50,
+    "lr": 0.0001,
+    "optimizer": "adamw",
+    "weight_decay": 0.05,
+    "warmup_epochs": 3,
+    "cosine": true,
+    "label_smoothing": 0.1,
+    "patience": 10,
+    "batch_size": 32,
+    "scenes_per_batch": 0,
+    "rotation": 10.0,
+    "shift": 0.0,
+    "zoom": 0.0,
+    "brightness": 0.2,
+    "contrast": 0.2,
+    "seeds": [
+      1,
+      2,
+      3
+    ]
+  },
+  "environment": {
+    "machine": "local",
+    "gpu": "NVIDIA RTX A6000",
+    "code_commit": "fe5035c",
+    "date": "2026-11-24 17:28"
+  }
+}

@@ -1,0 +1,184 @@
+convnext_tiny: 27.83 M parameters | device: cuda
+Recipe(model='convnext_tiny', epochs=50, lr=0.0001, optimizer='adamw', weight_decay=0.05, warmup_epochs=3, cosine=True, label_smoothing=0.1, patience=10, batch_size=32, scenes_per_batch=0, rotation=10.0, shift=0.0, zoom=0.0, brightness=0.2, contrast=0.2, seeds=[1, 2, 3])
+
+==================== Training run with seed 1 ====================
+Before training: val loss 2.766 (chance ~2.708) | val acc 6.9%
+[seed 1] Epoch [  1/50] | Train Loss 2.7461 | Train Acc   6.55% | Val Loss 2.7122 | Val Acc   6.93% | lr 3.39e-05 | 31s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [  2/50] | Train Loss 2.7242 | Train Acc   7.13% | Val Loss 2.7103 | Val Acc   6.93% | lr 6.73e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [  3/50] | Train Loss 2.7246 | Train Acc   6.03% | Val Loss 2.7127 | Val Acc   6.67% | lr 1.00e-04 | 16s
+[seed 1] Epoch [  4/50] | Train Loss 2.7206 | Train Acc   6.72% | Val Loss 2.7081 | Val Acc   6.93% | lr 9.99e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [  5/50] | Train Loss 2.7165 | Train Acc   6.03% | Val Loss 2.7086 | Val Acc   6.67% | lr 9.96e-05 | 16s
+[seed 1] Epoch [  6/50] | Train Loss 2.7164 | Train Acc   5.40% | Val Loss 2.7079 | Val Acc   6.67% | lr 9.90e-05 | 15s
+[seed 1] Epoch [  7/50] | Train Loss 2.7136 | Train Acc   5.69% | Val Loss 2.7079 | Val Acc   6.67% | lr 9.82e-05 | 15s
+[seed 1] Epoch [  8/50] | Train Loss 2.7164 | Train Acc   6.15% | Val Loss 2.7077 | Val Acc   6.67% | lr 9.72e-05 | 16s
+[seed 1] Epoch [  9/50] | Train Loss 2.7121 | Train Acc   7.13% | Val Loss 2.7076 | Val Acc   6.67% | lr 9.60e-05 | 16s
+[seed 1] Epoch [ 10/50] | Train Loss 2.7132 | Train Acc   6.26% | Val Loss 2.7045 | Val Acc   8.00% | lr 9.46e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [ 11/50] | Train Loss 2.6468 | Train Acc  11.49% | Val Loss 1.9428 | Val Acc  34.93% | lr 9.30e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [ 12/50] | Train Loss 1.4913 | Train Acc  59.66% | Val Loss 0.5457 | Val Acc  85.60% | lr 9.12e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [ 13/50] | Train Loss 0.9418 | Train Acc  84.54% | Val Loss 0.5089 | Val Acc  85.60% | lr 8.92e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [ 14/50] | Train Loss 0.7900 | Train Acc  90.80% | Val Loss 0.3765 | Val Acc  89.60% | lr 8.71e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [ 15/50] | Train Loss 0.7203 | Train Acc  94.20% | Val Loss 0.3226 | Val Acc  91.20% | lr 8.48e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [ 16/50] | Train Loss 0.7056 | Train Acc  94.77% | Val Loss 0.2738 | Val Acc  94.13% | lr 8.23e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [ 17/50] | Train Loss 0.6629 | Train Acc  96.67% | Val Loss 0.2969 | Val Acc  93.60% | lr 7.97e-05 | 16s
+[seed 1] Epoch [ 18/50] | Train Loss 0.6327 | Train Acc  98.05% | Val Loss 0.2704 | Val Acc  93.60% | lr 7.69e-05 | 16s
+[seed 1] Epoch [ 19/50] | Train Loss 0.6317 | Train Acc  97.82% | Val Loss 0.2664 | Val Acc  93.60% | lr 7.40e-05 | 16s
+[seed 1] Epoch [ 20/50] | Train Loss 0.6197 | Train Acc  97.87% | Val Loss 0.3196 | Val Acc  91.73% | lr 7.10e-05 | 16s
+[seed 1] Epoch [ 21/50] | Train Loss 0.6521 | Train Acc  97.24% | Val Loss 0.2586 | Val Acc  94.13% | lr 6.80e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [ 22/50] | Train Loss 0.6120 | Train Acc  98.51% | Val Loss 0.3057 | Val Acc  92.27% | lr 6.48e-05 | 16s
+[seed 1] Epoch [ 23/50] | Train Loss 0.6185 | Train Acc  97.93% | Val Loss 0.2425 | Val Acc  94.67% | lr 6.16e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [ 24/50] | Train Loss 0.6029 | Train Acc  98.74% | Val Loss 0.2391 | Val Acc  94.93% | lr 5.83e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [ 25/50] | Train Loss 0.6084 | Train Acc  98.39% | Val Loss 0.2552 | Val Acc  94.40% | lr 5.50e-05 | 16s
+[seed 1] Epoch [ 26/50] | Train Loss 0.5976 | Train Acc  98.97% | Val Loss 0.2765 | Val Acc  93.87% | lr 5.17e-05 | 16s
+[seed 1] Epoch [ 27/50] | Train Loss 0.5951 | Train Acc  98.91% | Val Loss 0.2144 | Val Acc  94.93% | lr 4.83e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [ 28/50] | Train Loss 0.5969 | Train Acc  98.91% | Val Loss 0.1964 | Val Acc  96.53% | lr 4.50e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 1] Epoch [ 29/50] | Train Loss 0.5917 | Train Acc  98.97% | Val Loss 0.2336 | Val Acc  95.73% | lr 4.17e-05 | 16s
+[seed 1] Epoch [ 30/50] | Train Loss 0.5875 | Train Acc  99.25% | Val Loss 0.2581 | Val Acc  94.40% | lr 3.84e-05 | 16s
+[seed 1] Epoch [ 31/50] | Train Loss 0.5865 | Train Acc  99.37% | Val Loss 0.2618 | Val Acc  94.13% | lr 3.52e-05 | 15s
+[seed 1] Epoch [ 32/50] | Train Loss 0.6024 | Train Acc  98.39% | Val Loss 0.2635 | Val Acc  94.40% | lr 3.20e-05 | 16s
+[seed 1] Epoch [ 33/50] | Train Loss 0.5840 | Train Acc  99.48% | Val Loss 0.2652 | Val Acc  94.13% | lr 2.90e-05 | 16s
+[seed 1] Epoch [ 34/50] | Train Loss 0.5770 | Train Acc  99.71% | Val Loss 0.2726 | Val Acc  95.20% | lr 2.60e-05 | 16s
+[seed 1] Epoch [ 35/50] | Train Loss 0.5812 | Train Acc  99.43% | Val Loss 0.2413 | Val Acc  95.47% | lr 2.31e-05 | 16s
+[seed 1] Epoch [ 36/50] | Train Loss 0.5821 | Train Acc  99.48% | Val Loss 0.2466 | Val Acc  95.47% | lr 2.03e-05 | 16s
+[seed 1] Epoch [ 37/50] | Train Loss 0.5858 | Train Acc  99.20% | Val Loss 0.2618 | Val Acc  95.47% | lr 1.77e-05 | 16s
+[seed 1] Epoch [ 38/50] | Train Loss 0.5784 | Train Acc  99.54% | Val Loss 0.2488 | Val Acc  94.93% | lr 1.52e-05 | 16s
+Early stopping: no validation improvement for 10 epochs.
+[seed 1] Best validation accuracy: 96.53% (epoch 28) -> saved outputs/convnext_tiny/weights/convnext_tiny_seed1.pth
+
+==================== Training run with seed 2 ====================
+Before training: val loss 2.756 (chance ~2.708) | val acc 6.4%
+[seed 2] Epoch [  1/50] | Train Loss 2.7510 | Train Acc   6.61% | Val Loss 2.7134 | Val Acc   6.13% | lr 3.39e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [  2/50] | Train Loss 2.7277 | Train Acc   5.34% | Val Loss 2.7122 | Val Acc   6.67% | lr 6.73e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [  3/50] | Train Loss 2.7203 | Train Acc   6.84% | Val Loss 2.7114 | Val Acc   6.67% | lr 1.00e-04 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [  4/50] | Train Loss 2.7213 | Train Acc   5.29% | Val Loss 2.7095 | Val Acc   6.67% | lr 9.99e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [  5/50] | Train Loss 2.7179 | Train Acc   5.23% | Val Loss 2.7083 | Val Acc   6.40% | lr 9.96e-05 | 16s
+[seed 2] Epoch [  6/50] | Train Loss 2.7160 | Train Acc   5.63% | Val Loss 2.7083 | Val Acc   6.67% | lr 9.90e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [  7/50] | Train Loss 2.7135 | Train Acc   5.98% | Val Loss 2.7090 | Val Acc   7.20% | lr 9.82e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [  8/50] | Train Loss 2.7156 | Train Acc   5.92% | Val Loss 2.7086 | Val Acc   6.93% | lr 9.72e-05 | 16s
+[seed 2] Epoch [  9/50] | Train Loss 2.7100 | Train Acc   7.07% | Val Loss 2.7080 | Val Acc   6.40% | lr 9.60e-05 | 16s
+[seed 2] Epoch [ 10/50] | Train Loss 2.7128 | Train Acc   6.61% | Val Loss 2.7079 | Val Acc   6.67% | lr 9.46e-05 | 16s
+[seed 2] Epoch [ 11/50] | Train Loss 2.7172 | Train Acc   5.17% | Val Loss 2.7080 | Val Acc   7.20% | lr 9.30e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 12/50] | Train Loss 2.7122 | Train Acc   6.15% | Val Loss 2.7079 | Val Acc   6.67% | lr 9.12e-05 | 16s
+[seed 2] Epoch [ 13/50] | Train Loss 2.7139 | Train Acc   6.32% | Val Loss 2.7074 | Val Acc   6.93% | lr 8.92e-05 | 16s
+[seed 2] Epoch [ 14/50] | Train Loss 2.7086 | Train Acc   7.24% | Val Loss 2.7055 | Val Acc   6.67% | lr 8.71e-05 | 16s
+[seed 2] Epoch [ 15/50] | Train Loss 2.6931 | Train Acc   8.68% | Val Loss 2.5714 | Val Acc  14.13% | lr 8.48e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 16/50] | Train Loss 1.8332 | Train Acc  44.25% | Val Loss 0.7757 | Val Acc  77.60% | lr 8.23e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 17/50] | Train Loss 0.9778 | Train Acc  83.16% | Val Loss 0.4676 | Val Acc  86.40% | lr 7.97e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 18/50] | Train Loss 0.7923 | Train Acc  90.98% | Val Loss 0.3925 | Val Acc  90.67% | lr 7.69e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 19/50] | Train Loss 0.7378 | Train Acc  93.45% | Val Loss 0.4106 | Val Acc  88.00% | lr 7.40e-05 | 16s
+[seed 2] Epoch [ 20/50] | Train Loss 0.7234 | Train Acc  94.08% | Val Loss 0.4071 | Val Acc  88.80% | lr 7.10e-05 | 16s
+[seed 2] Epoch [ 21/50] | Train Loss 0.6848 | Train Acc  95.80% | Val Loss 0.4495 | Val Acc  87.47% | lr 6.80e-05 | 16s
+[seed 2] Epoch [ 22/50] | Train Loss 0.6624 | Train Acc  96.67% | Val Loss 0.3490 | Val Acc  90.13% | lr 6.48e-05 | 16s
+[seed 2] Epoch [ 23/50] | Train Loss 0.6562 | Train Acc  96.95% | Val Loss 0.2947 | Val Acc  92.80% | lr 6.16e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 24/50] | Train Loss 0.6419 | Train Acc  97.47% | Val Loss 0.2713 | Val Acc  93.33% | lr 5.83e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 25/50] | Train Loss 0.6217 | Train Acc  98.39% | Val Loss 0.2837 | Val Acc  93.87% | lr 5.50e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 26/50] | Train Loss 0.6365 | Train Acc  97.70% | Val Loss 0.3034 | Val Acc  93.87% | lr 5.17e-05 | 16s
+[seed 2] Epoch [ 27/50] | Train Loss 0.6207 | Train Acc  98.10% | Val Loss 0.2574 | Val Acc  93.87% | lr 4.83e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 28/50] | Train Loss 0.6147 | Train Acc  98.33% | Val Loss 0.2727 | Val Acc  94.40% | lr 4.50e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 29/50] | Train Loss 0.5996 | Train Acc  98.97% | Val Loss 0.2755 | Val Acc  94.13% | lr 4.17e-05 | 16s
+[seed 2] Epoch [ 30/50] | Train Loss 0.5994 | Train Acc  98.97% | Val Loss 0.2434 | Val Acc  94.67% | lr 3.84e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 31/50] | Train Loss 0.5984 | Train Acc  98.91% | Val Loss 0.2310 | Val Acc  95.73% | lr 3.52e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 32/50] | Train Loss 0.5920 | Train Acc  99.20% | Val Loss 0.2514 | Val Acc  94.67% | lr 3.20e-05 | 16s
+[seed 2] Epoch [ 33/50] | Train Loss 0.5942 | Train Acc  98.91% | Val Loss 0.2239 | Val Acc  95.73% | lr 2.90e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 34/50] | Train Loss 0.5899 | Train Acc  99.20% | Val Loss 0.2504 | Val Acc  95.20% | lr 2.60e-05 | 16s
+[seed 2] Epoch [ 35/50] | Train Loss 0.5835 | Train Acc  99.43% | Val Loss 0.2305 | Val Acc  95.73% | lr 2.31e-05 | 16s
+[seed 2] Epoch [ 36/50] | Train Loss 0.5846 | Train Acc  99.37% | Val Loss 0.2355 | Val Acc  96.00% | lr 2.03e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 37/50] | Train Loss 0.5817 | Train Acc  99.66% | Val Loss 0.2180 | Val Acc  96.00% | lr 1.77e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 2] Epoch [ 38/50] | Train Loss 0.5837 | Train Acc  99.43% | Val Loss 0.2264 | Val Acc  95.73% | lr 1.52e-05 | 16s
+[seed 2] Epoch [ 39/50] | Train Loss 0.5825 | Train Acc  99.48% | Val Loss 0.2586 | Val Acc  94.93% | lr 1.29e-05 | 16s
+[seed 2] Epoch [ 40/50] | Train Loss 0.5829 | Train Acc  99.37% | Val Loss 0.2542 | Val Acc  94.93% | lr 1.08e-05 | 16s
+[seed 2] Epoch [ 41/50] | Train Loss 0.5871 | Train Acc  99.31% | Val Loss 0.2348 | Val Acc  95.73% | lr 8.78e-06 | 16s
+[seed 2] Epoch [ 42/50] | Train Loss 0.5814 | Train Acc  99.54% | Val Loss 0.2391 | Val Acc  95.73% | lr 6.98e-06 | 16s
+[seed 2] Epoch [ 43/50] | Train Loss 0.5806 | Train Acc  99.54% | Val Loss 0.2430 | Val Acc  95.73% | lr 5.37e-06 | 16s
+[seed 2] Epoch [ 44/50] | Train Loss 0.5805 | Train Acc  99.60% | Val Loss 0.2449 | Val Acc  95.47% | lr 3.97e-06 | 16s
+[seed 2] Epoch [ 45/50] | Train Loss 0.5842 | Train Acc  99.31% | Val Loss 0.2414 | Val Acc  95.47% | lr 2.77e-06 | 16s
+[seed 2] Epoch [ 46/50] | Train Loss 0.5776 | Train Acc  99.77% | Val Loss 0.2389 | Val Acc  95.47% | lr 1.78e-06 | 16s
+[seed 2] Epoch [ 47/50] | Train Loss 0.5798 | Train Acc  99.60% | Val Loss 0.2390 | Val Acc  95.47% | lr 1.00e-06 | 16s
+Early stopping: no validation improvement for 10 epochs.
+[seed 2] Best validation accuracy: 96.00% (epoch 37) -> saved outputs/convnext_tiny/weights/convnext_tiny_seed2.pth
+
+==================== Training run with seed 3 ====================
+Before training: val loss 2.753 (chance ~2.708) | val acc 5.6%
+[seed 3] Epoch [  1/50] | Train Loss 2.7534 | Train Acc   6.03% | Val Loss 2.7120 | Val Acc   6.40% | lr 3.39e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [  2/50] | Train Loss 2.7337 | Train Acc   6.26% | Val Loss 2.7106 | Val Acc   6.67% | lr 6.73e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [  3/50] | Train Loss 2.7225 | Train Acc   6.32% | Val Loss 2.7101 | Val Acc   6.67% | lr 1.00e-04 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [  4/50] | Train Loss 2.7206 | Train Acc   6.38% | Val Loss 2.7080 | Val Acc   6.67% | lr 9.99e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [  5/50] | Train Loss 2.7132 | Train Acc   6.03% | Val Loss 2.6981 | Val Acc  14.13% | lr 9.96e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [  6/50] | Train Loss 2.5992 | Train Acc  13.85% | Val Loss 2.0276 | Val Acc  41.07% | lr 9.90e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [  7/50] | Train Loss 1.5975 | Train Acc  54.66% | Val Loss 0.7813 | Val Acc  75.73% | lr 9.82e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [  8/50] | Train Loss 0.9691 | Train Acc  84.08% | Val Loss 0.4576 | Val Acc  86.93% | lr 9.72e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [  9/50] | Train Loss 0.7782 | Train Acc  91.84% | Val Loss 0.3782 | Val Acc  89.60% | lr 9.60e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [ 10/50] | Train Loss 0.7302 | Train Acc  94.37% | Val Loss 0.3690 | Val Acc  90.93% | lr 9.46e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [ 11/50] | Train Loss 0.7045 | Train Acc  95.63% | Val Loss 0.3987 | Val Acc  88.80% | lr 9.30e-05 | 16s
+[seed 3] Epoch [ 12/50] | Train Loss 0.7015 | Train Acc  94.89% | Val Loss 0.3416 | Val Acc  93.60% | lr 9.12e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [ 13/50] | Train Loss 0.6598 | Train Acc  96.72% | Val Loss 0.3355 | Val Acc  90.67% | lr 8.92e-05 | 16s
+[seed 3] Epoch [ 14/50] | Train Loss 0.6340 | Train Acc  97.87% | Val Loss 0.3157 | Val Acc  93.60% | lr 8.71e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [ 15/50] | Train Loss 0.6546 | Train Acc  96.78% | Val Loss 0.3155 | Val Acc  93.33% | lr 8.48e-05 | 16s
+[seed 3] Epoch [ 16/50] | Train Loss 0.6229 | Train Acc  98.05% | Val Loss 0.2795 | Val Acc  93.60% | lr 8.23e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [ 17/50] | Train Loss 0.6171 | Train Acc  98.28% | Val Loss 0.3128 | Val Acc  93.07% | lr 7.97e-05 | 16s
+[seed 3] Epoch [ 18/50] | Train Loss 0.6183 | Train Acc  98.05% | Val Loss 0.2808 | Val Acc  93.60% | lr 7.69e-05 | 16s
+[seed 3] Epoch [ 19/50] | Train Loss 0.6338 | Train Acc  97.07% | Val Loss 0.2844 | Val Acc  94.40% | lr 7.40e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [ 20/50] | Train Loss 0.6086 | Train Acc  98.51% | Val Loss 0.3017 | Val Acc  93.33% | lr 7.10e-05 | 16s
+[seed 3] Epoch [ 21/50] | Train Loss 0.6025 | Train Acc  98.79% | Val Loss 0.2546 | Val Acc  94.67% | lr 6.80e-05 | 16s
+   ---> New best validation accuracy, weights kept.
+[seed 3] Epoch [ 22/50] | Train Loss 0.5969 | Train Acc  98.85% | Val Loss 0.3075 | Val Acc  93.07% | lr 6.48e-05 | 16s
+[seed 3] Epoch [ 23/50] | Train Loss 0.5917 | Train Acc  99.02% | Val Loss 0.2591 | Val Acc  94.40% | lr 6.16e-05 | 16s
+[seed 3] Epoch [ 24/50] | Train Loss 0.5850 | Train Acc  99.66% | Val Loss 0.2544 | Val Acc  94.13% | lr 5.83e-05 | 16s
+[seed 3] Epoch [ 25/50] | Train Loss 0.6060 | Train Acc  98.56% | Val Loss 0.2950 | Val Acc  93.60% | lr 5.50e-05 | 16s
+[seed 3] Epoch [ 26/50] | Train Loss 0.5922 | Train Acc  99.20% | Val Loss 0.2990 | Val Acc  93.60% | lr 5.17e-05 | 16s
+[seed 3] Epoch [ 27/50] | Train Loss 0.5875 | Train Acc  99.37% | Val Loss 0.2996 | Val Acc  93.07% | lr 4.83e-05 | 16s
+[seed 3] Epoch [ 28/50] | Train Loss 0.5824 | Train Acc  99.54% | Val Loss 0.3233 | Val Acc  92.27% | lr 4.50e-05 | 16s
+[seed 3] Epoch [ 29/50] | Train Loss 0.5912 | Train Acc  99.08% | Val Loss 0.2919 | Val Acc  93.87% | lr 4.17e-05 | 16s
+[seed 3] Epoch [ 30/50] | Train Loss 0.5808 | Train Acc  99.54% | Val Loss 0.2926 | Val Acc  93.33% | lr 3.84e-05 | 16s
+[seed 3] Epoch [ 31/50] | Train Loss 0.5830 | Train Acc  99.43% | Val Loss 0.2800 | Val Acc  93.60% | lr 3.52e-05 | 16s
+Early stopping: no validation improvement for 10 epochs.
+[seed 3] Best validation accuracy: 94.67% (epoch 21) -> saved outputs/convnext_tiny/weights/convnext_tiny_seed3.pth

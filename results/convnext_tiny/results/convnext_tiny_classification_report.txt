@@ -1,0 +1,40 @@
+ConvNeXt-Tiny, pretrained on ImageNet - test set, seed 1, accuracy 96.80%
+
+                precision    recall  f1-score   support
+
+ white plastic     1.0000    1.0000    1.0000        25
+     aluminium     0.9565    0.8800    0.9167        25
+         brass     0.9600    0.9600    0.9600        25
+         steel     0.8800    0.8800    0.8800        25
+  orange acryl     1.0000    1.0000    1.0000        25
+  yellow acryl     1.0000    1.0000    1.0000        25
+    blue acryl     1.0000    0.9600    0.9796        25
+     red acryl     1.0000    0.9600    0.9796        25
+   red plastic     0.8621    1.0000    0.9259        25
+  blue plastic     0.9615    1.0000    0.9804        25
+yellow plastic     1.0000    1.0000    1.0000        25
+  gray plastic     1.0000    1.0000    1.0000        25
+ black plastic     0.9600    0.9600    0.9600        25
+    light wood     1.0000    0.9600    0.9796        25
+     dark wood     0.9600    0.9600    0.9600        25
+
+      accuracy                         0.9680       375
+     macro avg     0.9693    0.9680    0.9681       375
+  weighted avg     0.9693    0.9680    0.9681       375
+
+         class | true | predicted
+ white plastic |   25 |        25
+     aluminium |   25 |        23
+         brass |   25 |        25
+         steel |   25 |        25
+  orange acryl |   25 |        25
+  yellow acryl |   25 |        25
+    blue acryl |   25 |        24
+     red acryl |   25 |        24
+   red plastic |   25 |        29
+  blue plastic |   25 |        26
+yellow plastic |   25 |        25
+  gray plastic |   25 |        25
+ black plastic |   25 |        25
+    light wood |   25 |        24
+     dark wood |   25 |        25
