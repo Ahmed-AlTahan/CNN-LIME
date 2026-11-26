@@ -111,8 +111,10 @@ def _save_to_drive(out_dir, model):
 
 def _rclone():
     """Path of the rclone program, or None (also finds it in ~/.local/bin, which is often not on PATH)."""
-    local = os.path.expanduser("~/.local/bin/rclone")
-    return shutil.which("rclone") or (local if os.access(local, os.X_OK) else None)
+    for local in (os.path.expanduser("~/.local/bin/rclone"), os.path.expanduser("~/.local/bin/rclone.exe")):
+        if os.path.isfile(local) and os.access(local, os.X_OK):
+            return shutil.which("rclone") or local
+    return shutil.which("rclone")
 
 
 def save_to_drive_rclone(out_dir):
