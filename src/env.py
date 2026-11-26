@@ -1,13 +1,16 @@
 """Where the code runs (Colab or an own computer with a GPU), the dataset download, and
 saving the results.
 
-Every training run writes everything to outputs/<model>/ (weights, figures, results).
-`save_results` then keeps them permanently:
-  * GitHub: figures and result files (no weights) -> results/<model>/ in this repository,
+Every training run writes everything to outputs/<model>/ (weights, figures, results); the LIME
+notebook writes to outputs/lime/<model>/. Below, <name> is that folder relative to outputs/
+("resnet50", "lime/convnext_tiny", ...). `save_results` then keeps them permanently:
+  * GitHub: figures and result files (no weights) -> results/<name>/ in this repository,
     committed and pushed. Works from Colab (with a GITHUB_TOKEN secret) and from an own computer.
-  * Google Drive: a full copy including the weights -> MyDrive/thesis_results/<model>/.
+  * Google Drive: a full copy including the weights -> MyDrive/thesis_results/<name>/.
     Colab: through the mounted Drive. Own computer: through rclone (one-time setup in the README:
-    a remote named config.RCLONE_REMOTE). Without rclone the weights stay in outputs/<model>/weights/."""
+    a remote named config.RCLONE_REMOTE). Without rclone the weights stay in outputs/<model>/weights/.
+
+`find_weights` gets the trained weights back (for LIME): from outputs/, Google Drive or rclone."""
 
 import datetime
 import os
@@ -79,16 +82,21 @@ def ensure_dataset():
 
 # ---------------------------------------------------------------- saving the results
 
+def _name(out_dir):
+    """outputs/resnet50 -> "resnet50", outputs/lime/convnext_tiny -> "lime/convnext_tiny"."""
+    return os.path.relpath(out_dir, config.OUTPUT_DIR).replace(os.sep, "/")
+
+
 def save_results(out_dir, push=True):
-    """Keeps the results of one model permanently (see the module docstring)."""
-    model = os.path.basename(os.path.normpath(out_dir))
+    """Keeps the results in out_dir permanently (see the module docstring)."""
+    name = _name(out_dir)
     if IN_COLAB:
-        _save_to_drive(out_dir, model)
+        _save_to_drive(out_dir, name)
     else:
         save_to_drive_rclone(out_dir)
-    _copy_to_repo(out_dir, model)
+    _copy_to_repo(out_dir, name)
     if push:
-        _push_to_github(model)
+        _push_to_github(name)
 
 
 def _save_to_drive(out_dir, model):
@@ -110,7 +118,7 @@ def _rclone():
 def save_to_drive_rclone(out_dir):
     """Own computer: copies outputs/<model>/ (with weights) to MyDrive/thesis_results/<model>/ via rclone.
     A re-run replaces this model's files only. Can be called on its own to retry the upload."""
-    model = os.path.basename(os.path.normpath(out_dir))
+    model = _name(out_dir)
     remote = config.RCLONE_REMOTE
     setup = (f"  One-time setup: see the README, section 'Google Drive on an own computer'.\n"
              f"  Until then all outputs (with weights) are only on this computer: outputs/{model}/")
@@ -131,6 +139,32 @@ def save_to_drive_rclone(out_dir):
         return False
     print(f"Google Drive: full copy (with weights) in MyDrive/thesis_results/{model}/")
     return True
+
+
+def find_weights(model, seed):
+    """Path of outputs/<model>/weights/<model>_seed<seed>.pth. If it is not on this computer, it is copied
+    from Google Drive (MyDrive/thesis_results/<model>/weights/): in Colab through the mounted Drive,
+    on an own computer through rclone."""
+    name = f"{model}_seed{seed}.pth"
+    local = os.path.join(config.OUTPUT_DIR, model, "weights", name)
+    if os.path.isfile(local):
+        return local
+    os.makedirs(os.path.dirname(local), exist_ok=True)
+    print(f"{name} is not in outputs/{model}/weights/ - getting it from Google Drive ...")
+    if IN_COLAB:
+        from google.colab import drive
+        drive.mount("/content/drive")
+        src = os.path.join(config.DRIVE_DIR, model, "weights", name)
+        if os.path.isfile(src):
+            shutil.copy(src, local)
+    elif _rclone():
+        subprocess.run([_rclone(), "copyto", f"{config.RCLONE_REMOTE}:thesis_results/{model}/weights/{name}", local],
+                       capture_output=True, text=True)
+    if not os.path.isfile(local):
+        raise FileNotFoundError(
+            f"Weights not found: {name}.\n  Download MyDrive/thesis_results/{model}/weights/{name} from Google Drive "
+            f"and put it into {local}\n  (or run this notebook where the model was trained).")
+    return local
 
 
 def _copy_to_repo(out_dir, model):

@@ -72,3 +72,20 @@ RECIPES = {
     "convnext_tiny": Recipe("convnext_tiny", epochs=50, lr=1e-4, optimizer="adamw", weight_decay=0.05,
                             warmup_epochs=3, cosine=True, label_smoothing=0.1, patience=10, batch_size=32),
 }
+
+
+# ---- LIME explanations (explain.py) ----
+@dataclass
+class LimeSettings:
+    """How one LIME explanation is computed. Defaults follow the lime package where it has one."""
+    n_segments: int = 250         # SLIC: about this many superpixels per 512x512 image (the workpiece is small)
+    compactness: float = 10.0     # SLIC: higher = more square superpixels, lower = closer to colour edges
+    n_samples: int = 1000         # perturbed copies of the image per explanation
+    batch_size: int = 50          # copies per forward pass
+    kernel_width: float = 0.25    # similarity kernel on the cosine distance to the original (lime default)
+    ridge_alpha: float = 1.0      # regularisation of the weighted linear model (lime default)
+    top_k: int = 5                # superpixels highlighted in the figures
+    seed: int = 0                 # which superpixels are hidden in each copy
+
+
+LIME = LimeSettings()

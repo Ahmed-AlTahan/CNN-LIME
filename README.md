@@ -10,6 +10,7 @@ Five CNNs are compared on the same data and the same scene-wise split.
 | 3 | ResNet18, pretrained on ImageNet | [03_resnet18.ipynb](notebooks/03_resnet18.ipynb) | [results/resnet18](results/resnet18) |
 | 4 | ResNet50, pretrained on ImageNet | [04_resnet50.ipynb](notebooks/04_resnet50.ipynb) | [results/resnet50](results/resnet50) |
 | 5 | ConvNeXt-Tiny, pretrained on ImageNet | [05_convnext_tiny.ipynb](notebooks/05_convnext_tiny.ipynb) | [results/convnext_tiny](results/convnext_tiny) |
+| - | LIME explanations of a trained model (step 1: a few test images) | [06_lime.ipynb](notebooks/06_lime.ipynb) | [results/lime](results/lime) |
 
 A results folder appears once its notebook has been run and saved.
 
@@ -22,9 +23,11 @@ src/
   models.py     SimpleCNN, AttentionCNN, Pretrained (ResNet18 / ResNet50 / ConvNeXt-Tiny)
   engine.py     training (reproducible, one run per seed), evaluation, loading saved weights
   report.py     test summary over seeds, per-class / per-scene analysis, all figures
+  explain.py    LIME (own implementation, SLIC superpixels from scikit-image), example choice, LIME figures
   env.py        Colab or own computer, dataset download, saving results to GitHub / Google Drive
 notebooks/      one notebook per model; they only call the code in src/
-results/        figures and result files of every model (no weights), written by the notebooks
+results/        figures and result files of every model (no weights), written by the notebooks;
+                LIME results in results/lime/<model>/
 requirements.txt
 ```
 
@@ -103,6 +106,22 @@ mkdir -p ~/.local/bin && cd /tmp && curl -LO https://downloads.rclone.org/rclone
 The last notebook cell then uploads `outputs/<model>/` (with weights) to `MyDrive/thesis_results/<model>/`.
 If the upload fails, retry it in the notebook with `env.save_to_drive_rclone(out_dir)`.
 On a shared computer, remove the Drive login when you are done: `~/.local/bin/rclone config delete gdrive`.
+
+## LIME explanations
+
+`notebooks/06_lime.ipynb` explains predictions of a trained model with LIME (Ribeiro et al., 2016):
+SLIC superpixels (about 170 per 512x512 image), 1000 copies with random superpixels hidden (filled with the
+image's mean colour), the model's probability for every copy, and a weighted Ridge regression whose
+coefficients are the importances of the superpixels. The settings are `config.LIME`.
+
+**Step 1** (current): ConvNeXt-Tiny on 8 test images - 4 wrong predictions, each paired with a correct
+image of the same material from another scene; for wrong predictions both the predicted and the true class are
+explained. Outputs in `results/lime/<model>/`: one figure per image, an overview figure,
+`<model>_lime_examples.csv` (top superpixels, probability, fidelity R2 per explanation) and `<model>_lime_summary.json`.
+
+The notebook uses the analysed run of the model (best validation accuracy, from its `summary.json`). Its weights
+are taken from `outputs/<model>/weights/`, or else from Google Drive (`thesis_results/<model>/weights/`).
+Run it on a GPU: about 2 s per explanation, on a CPU about 10 minutes.
 
 ## Loading a trained model (e.g. for LIME)
 
