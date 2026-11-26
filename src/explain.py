@@ -40,7 +40,10 @@ from engine import device, out_path, rel
 
 
 def output_dir(model_name):
+    """outputs/lime/<model>/, emptied first: a new run replaces all LIME results of this model."""
     path = os.path.join(config.OUTPUT_DIR, "lime", model_name)
+    for sub in ("figures", "results"):
+        shutil.rmtree(os.path.join(path, sub), ignore_errors=True)
     os.makedirs(path, exist_ok=True)
     return path
 
@@ -119,6 +122,25 @@ def predict_proba(model, images_uint8):
     return out.float().softmax(1)
 
 
+def random_masks(n_superpixels, s):
+    """Step 2: which superpixels are visible (1) or hidden (0) in each of the s.n_samples copies.
+    Copy 0 is the original image (all visible)."""
+    rng = np.random.default_rng(s.seed)
+    masks = rng.integers(0, 2, size=(s.n_samples, n_superpixels)).astype(np.float32)
+    masks[0] = 1
+    return masks
+
+
+def make_copies(image, segments, masks):
+    """Step 2: the copies of an image (3 x H x W uint8 tensor) for the given on/off masks, on the GPU.
+    A hidden superpixel is filled with the mean colour of the whole image."""
+    img = image.to(device)
+    fill = img.float().mean(dim=(1, 2), keepdim=True).round().to(torch.uint8)
+    seg = torch.from_numpy(segments).long().to(device)
+    visible = torch.from_numpy(np.asarray(masks)).to(device).bool()[:, seg]          # B x H x W
+    return torch.where(visible.unsqueeze(1), img.unsqueeze(0), fill.unsqueeze(0))
+
+
 @torch.no_grad()
 def lime_explain(model, image, target, s, segments=None):
     """LIME for one image (3 x H x W uint8 tensor) and one class (steps 1-5 in the module docstring).
@@ -126,18 +148,11 @@ def lime_explain(model, image, target, s, segments=None):
     if segments is None:
         segments = superpixels(image.permute(1, 2, 0).numpy(), s)
     n = int(segments.max()) + 1
+    masks = random_masks(n, s)
 
-    rng = np.random.default_rng(s.seed)
-    masks = rng.integers(0, 2, size=(s.n_samples, n)).astype(np.float32)   # 1 = superpixel visible
-    masks[0] = 1                                                            # copy 0 = the original
-
-    img = image.to(device)
-    fill = img.float().mean(dim=(1, 2), keepdim=True).round().to(torch.uint8)   # mean colour of the image
-    seg = torch.from_numpy(segments).long().to(device)
     probs = []
     for i in range(0, s.n_samples, s.batch_size):
-        visible = torch.from_numpy(masks[i:i + s.batch_size]).to(device).bool()[:, seg]   # B x H x W
-        copies = torch.where(visible.unsqueeze(1), img.unsqueeze(0), fill.unsqueeze(0))
+        copies = make_copies(image, segments, masks[i:i + s.batch_size])
         probs.append(predict_proba(model, copies)[:, target].cpu())
     probs = torch.cat(probs).numpy()
 
@@ -149,6 +164,65 @@ def lime_explain(model, image, target, s, segments=None):
     return dict(target=int(target), prob=float(probs[0]), weights=linear.coef_,
                 intercept=float(linear.intercept_), fidelity=float(linear.score(masks, probs, sample_weight=kernel)),
                 segments=segments)
+
+
+# ---------------------------------------------------------------- step by step on one image (for presenting)
+
+def show_superpixels(image, s, out_dir):
+    """Step 1 on one image: the image, its SLIC superpixels, and every superpixel in its mean colour
+    (one superpixel = one feature for LIME). Returns the superpixels."""
+    hwc = image.permute(1, 2, 0).numpy()
+    segments = superpixels(hwc, s)
+    n = int(segments.max()) + 1
+    mean_colours = np.stack([hwc[segments == k].mean(0) for k in range(n)]).astype(np.uint8)
+
+    fig, axes = plt.subplots(1, 3, figsize=(19, 6.8))
+    axes[0].imshow(hwc)
+    axes[0].set_title("the test image (512x512, as the model sees it)")
+    axes[1].imshow(mark_boundaries(hwc, segments, color=(1, 1, 0)))
+    axes[1].set_title(f"split into {n} superpixels by SLIC")
+    axes[2].imshow(mean_colours[segments])
+    axes[2].set_title(f"the {n} features LIME works with\n(each superpixel shown in its mean colour)")
+    for ax in axes:
+        ax.axis("off")
+    fig.suptitle("LIME step 1: superpixels", fontsize=15, fontweight="bold")
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    path = out_path(out_dir, "figures", "lime_step1_superpixels.png")
+    fig.savefig(path, dpi=100)
+    plt.show()
+    plt.close(fig)
+    print(f"{n} superpixels (requested about {s.n_segments}) | saved {rel(path)}")
+    return segments
+
+
+@torch.no_grad()
+def show_variations(model, image, segments, target, s, out_dir, n_show=4):
+    """Steps 2 and 3 on one image: the first n_show random copies that LIME really uses for this image
+    (hidden superpixels = mean colour of the image) and the model's probability of the class for each."""
+    n = int(segments.max()) + 1
+    masks = random_masks(n, s)[:n_show + 1]                 # copy 0 = the original, then copies 1..n_show
+    copies = make_copies(image, segments, masks)
+    probs = predict_proba(model, copies)[:, target].cpu().numpy()
+    name = config.CLASS_NAMES[target]
+
+    fig, axes = plt.subplots(1, n_show + 1, figsize=(4.6 * (n_show + 1), 5.6))
+    for k, ax in enumerate(axes):
+        copy = copies[k].permute(1, 2, 0).cpu().numpy()
+        ax.imshow(mark_boundaries(copy, segments, color=(1, 1, 0)))
+        head = "original: all superpixels visible" if k == 0 else \
+            f"copy {k}: {int(masks[k].sum())} of {n} visible"
+        ax.set_title(f"{head}\np({name}) = {probs[k]:.2f}", fontsize=12)
+        ax.axis("off")
+    fig.suptitle(f"LIME steps 2 and 3: random copies of the image and the model's answer for each "
+                 f"(the first {n_show} of the {s.n_samples} copies LIME uses)", fontsize=14, fontweight="bold")
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
+    path = out_path(out_dir, "figures", "lime_step2_variations.png")
+    fig.savefig(path, dpi=100)
+    plt.show()
+    plt.close(fig)
+    print("visible superpixels:", [int(m.sum()) for m in masks], f"| p({name}):", [round(float(p), 3) for p in probs])
+    print(f"Saved {rel(path)}")
+    return probs
 
 
 # ---------------------------------------------------------------- figures and table
@@ -195,8 +269,6 @@ def plot_explanation(image_hwc, exps, title, s, path):
 def explain_examples(model, examples, s, out_dir, model_name):
     """Explains every example: the predicted class, and for a wrong prediction also the true class.
     Saves one figure per example, an overview figure, lime_examples.csv and lime_summary.json."""
-    for sub in ("figures", "results"):                          # a re-run replaces the old files
-        shutil.rmtree(os.path.join(out_dir, sub), ignore_errors=True)
     rows, overview = [], []
     for i, e in enumerate(examples, 1):
         t0 = time.time()
@@ -258,7 +330,7 @@ def _plot_overview(items, model_name, out_dir):
         b.imshow(_heatmap(exp), cmap="RdBu_r", vmin=-vmax, vmax=vmax, alpha=0.6)
         b.set_title("LIME: red = supports the prediction", fontsize=10)
     fig.suptitle(f"LIME explanations - {model_name} (green = correct, red = wrong)", fontsize=15, fontweight="bold")
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 1, 0.97))                    # leave room for the title
     path = out_path(out_dir, "figures", "lime_overview.png")
     fig.savefig(path, dpi=100)
     plt.show()

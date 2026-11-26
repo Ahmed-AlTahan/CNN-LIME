@@ -1,0 +1,21 @@
+{
+  "model": "convnext_tiny",
+  "examples": 8,
+  "settings": {
+    "n_segments": 250,
+    "compactness": 10.0,
+    "n_samples": 1000,
+    "batch_size": 50,
+    "kernel_width": 0.25,
+    "ridge_alpha": 1.0,
+    "top_k": 5,
+    "seed": 0
+  },
+  "mean_fidelity_r2": 0.7415,
+  "environment": {
+    "machine": "colab",
+    "gpu": "Tesla T4",
+    "code_commit": "e49f109",
+    "date": "2026-11-26 19:58"
+  }
+}
